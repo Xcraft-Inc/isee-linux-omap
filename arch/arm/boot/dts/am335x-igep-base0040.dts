@@ -1,0 +1,180 @@
+/*
+ * am335x-igep-base0040.dts - Device Tree file for IGEP0034 (Full)
+ * MODULE based on AM3354 and BASE0040 RB IGEP SMARC EXPANSION 
+ *
+ * Copyright (C) 2016 ISEE 2007 SL - http://www.isee.biz
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ */
+/dts-v1/;
+
+#include "am335x-igep-igep0034.dtsi"
+
+/ {
+	model = "ISEE IGEP SMARC AM3354 Kit";
+	compatible = "isee,am335x-igep-base0040", "isee,am335x-igep-igep0034", "isee,am335x-igep-igep0034-lite", "ti,am33xx";
+
+	sound {
+		compatible = "ti,da830-evm-audio";
+		ti,model = "AM335x-BASE0040";
+		ti,audio-codec = <&tlv320aic3106>;
+		ti,mcasp-controller = <&mcasp0>;
+		ti,codec-clock-rate = <12000000>;
+		ti,audio-routing =
+            "Headphone Jack",       "HPLOUT",
+            "Headphone Jack",       "HPROUT",
+            "Mic Jack",             "MIC3L",
+            "Mic Jack",             "MIC3R",
+            "Line In",              "LINE1L",
+            "Line In",              "LINE1R";
+	};
+
+	regulators {
+		compatible = "simple-bus";
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		/*usb_hub_power: fixedregulator@3 {
+			compatible = "regulator-fixed";
+			pinctrl-names = "default";
+			pinctrl-0 = <&reset_hub_pins_default>;
+     	    		#gpio-cells = <2>;
+        	    	gpio-controller;
+			regulator-name = "usb_hub_power";
+			reg = <1>;
+			gpio = <&gpio0 23 1>;
+		};*/
+		
+		usb_power: fixedregulator@4 {
+            		compatible = "regulator-fixed";
+	            	regulator-name = "usb_power";
+        	    	reg = <2>;
+        	    	#gpio-cells = <2>;
+        	    	gpio-controller;
+        	   	gpio = <&tps 0 1>;
+        	    	output-high;
+		};
+        };
+
+	/*userspace-consumer@0 {
+		compatible = "reg-userspace-consumer";
+		regulator-name = "usb_hub_power";
+		regulator-boot-on;
+		regulator-supplies = "usb_hub_power";
+		usb_hub_power-supply = <&usb_hub_power>;
+	};*/
+
+	userspace-consumer@1 {
+		compatible = "reg-userspace-consumer";
+		regulator-name = "usb_power";
+		//regulator-boot-on;
+		regulator-supplies = "usb_power";
+		usb_power-supply = <&usb_power>;
+	}; 
+};
+
+&am33xx_pinmux {
+	pinctrl-names = "default";
+		pinctrl-0 = <
+			&user_buttons_pins_default
+		>;
+
+	reset_tlv320_pins: pinmux_reset_tlv320_pins {
+		pinctrl-single,pins = <
+			AM33XX_IOPAD(0x9A0, PIN_OUTPUT_PULLUP | MUX_MODE7 ) /* mcasp0_aclkr.gpio3[18] */
+		>;
+	};
+
+	user_buttons_pins_default: pinmux_user_buttons_pins_default {
+		pinctrl-single,pins = <
+			AM33XX_IOPAD(0x9E8, PIN_INPUT_PULLUP | MUX_MODE7)		/* EMU1.gpio3[8] */
+		>;
+	};
+
+	uart3_pins_default: pinmux_uart3_pins_default {
+		pinctrl-single,pins = <
+			AM33XX_IOPAD(0x934, PIN_INPUT_PULLUP | MUX_MODE1)		/* gmii1_rxd3.uart3_rxd */
+			AM33XX_IOPAD(0x938, PIN_OUTPUT | MUX_MODE1)				/* gmii1_rxclk.uart2_txd */
+		>;
+	};
+
+	uart3_pins_sleep: pinmux_uart3_pins_sleep {
+		pinctrl-single,pins = <
+			AM33XX_IOPAD(0x934, PIN_INPUT_PULLDOWN | MUX_MODE7)
+			AM33XX_IOPAD(0x938, PIN_INPUT_PULLDOWN | MUX_MODE7)
+		>;
+	};
+
+	uart5_pins_default: pinmux_uart5_pins_default {
+		pinctrl-single,pins = <
+			AM33XX_IOPAD(0x908, PIN_INPUT_PULLUP | MUX_MODE3)		/* gmii1_col.uart5_rxd */
+			AM33XX_IOPAD(0x918, PIN_OUTPUT | MUX_MODE3)				/* gmii1_rxdv.uart5_txd */
+		>;
+	};
+
+	uart5_pins_sleep: pinmux_uart5_pins_sleep {
+		pinctrl-single,pins = <
+			AM33XX_IOPAD(0x908, PIN_INPUT_PULLDOWN | MUX_MODE7)
+			AM33XX_IOPAD(0x918, PIN_INPUT_PULLDOWN | MUX_MODE7)
+		>;
+	};
+
+	// AÑADIDO MUX DEL PIN QUE CONTROLA EL RESET DEL HUB 01-03-18
+	// REGISTRO ENCONTRADO EN MANUAL CHIP ti.com/lit/ug/spruh73p/spruh73p.pdf
+
+	reset_hub_pins_default: pinmux_reset_hub_pins_default {
+		pinctrl-single,pins = <
+			AM33XX_IOPAD(0x824, PIN_OUTPUT_PULLDOWN | MUX_MODE7)			/* gpmc_ad9.gpio0_23 */
+		>;
+	};
+
+};
+
+&i2c1 {
+	tlv320aic3106: tlv320aic3106@1b {
+		compatible = "ti,tlv320aic3106";
+		reg = <0x1b>;
+		status = "okay";
+		gpio-reset = <&gpio3 18 1>;
+		ai3x-micbias-vg = <2>;
+
+		/* Regulators */
+		AVDD-supply = <&vaux2_reg>;
+		IOVDD-supply = <&vaux2_reg>;
+		DRVDD-supply = <&vaux2_reg>;
+		DVDD-supply = <&vbat>;
+	};
+};
+
+&mcasp0 {
+	op-mode = <0>;		/* MCASP_IIS_MODE */
+	tdm-slots = <2>;
+	/* 16 serializer */
+	serial-dir = < /* 0: INACTIVE, 1: TX, 2: RX */
+		1 2 0 0
+	>;
+	tx-num-evt = <32>;
+	rx-num-evt = <32>;
+};
+
+&uart3 {
+	status = "okay";
+	pinctrl-names = "default", "sleep";
+	pinctrl-0 = <&uart3_pins_default>;
+	pinctrl-1 = <&uart3_pins_sleep>;
+};
+
+&uart5 {
+	status = "okay";
+	pinctrl-names = "default", "sleep";
+	pinctrl-0 = <&uart5_pins_default>;
+	pinctrl-1 = <&uart5_pins_sleep>;
+};
+
+&tscadc {
+	adc {
+		ti,adc-channels = <0 1 2 3 4 5 6>;
+	};
+};
