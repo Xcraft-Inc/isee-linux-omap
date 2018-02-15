@@ -394,9 +394,9 @@
 
 &mmc3 {
 	status = "okay";
-	//dmas = <&edma 12
-	//	&edma 13>; 
-	//dma-names = "tx", "rx";
+	dmas = <&edma_xbar 12 0 1
+		&edma_xbar 13 0 2>;
+	dma-names = "tx", "rx";
 	vmmc-supply = <&wlan_en_reg>;
 	bus-width = <4>;
 	pinctrl-names = "default", "sleep";
@@ -406,7 +406,7 @@
 	ti,needs-special-hs-handling;
 	cap-power-off-card;
 	keep-power-in-suspend;
-	//#dma-cells = <2>;
+	#dma-cells = <2>;
 	#address-cells = <1>;
 	#size-cells = <0>;
 	wlcore: wlcore@0 {
