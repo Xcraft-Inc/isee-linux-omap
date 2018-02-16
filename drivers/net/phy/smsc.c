@@ -259,7 +259,7 @@ static struct phy_driver smsc_phy_driver[] = {
 	.phy_id_mask	= 0xfffffff0,
 	.name		= "SMSC LAN8710/LAN8720",
 
-	.features	= (PHY_BASIC_FEATURES | SUPPORTED_Pause
+	.features	= (PHY_ETHERNET_FEATURES | SUPPORTED_Pause
 				| SUPPORTED_Asym_Pause),
 	.flags		= PHY_HAS_INTERRUPT | PHY_HAS_MAGICANEG,
 
