@@ -558,6 +558,8 @@ dtb-$(CONFIG_SOC_AM33XX) += \
 	am335x-icev2.dtb \
 	am335x-igep-base0040.dtb \
 	am335x-igep-base0040-lite.dtb \
+	am335x-sopa0000.dtb \
+	am335x-sopa0000-256.dtb \
 	am335x-lxm.dtb \
 	am335x-nano.dtb \
 	am335x-pepper.dtb \
