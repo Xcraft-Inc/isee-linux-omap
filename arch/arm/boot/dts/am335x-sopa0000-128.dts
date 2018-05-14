@@ -1,5 +1,5 @@
 /*
- * am335x-sopa0000-256.dts - Device Tree file for SOPA0000 256MB NAND FLASH
+ * am335x-sopa0000.dts - Device Tree file for SOPA0000
  *
  * Copyright (C) 2017 ISEE 2007 SL - http://www.isee.biz
  *
@@ -14,7 +14,7 @@
 #include <dt-bindings/interrupt-controller/irq.h>
 
 / {
-	model = "SOPA0000 SBC 256 MB FLASH";
+	model = "SOPA0000 SBC";
 	compatible = "sopa,sopa0000", "ti,am33xx";
 
 	cpus {
@@ -337,6 +337,7 @@
                                             2 13>;
 };
 
+
 &mmc3 {
 	status = "okay";
 	dmas = <&edma_xbar 12 0 1
@@ -372,7 +373,7 @@
 	pinctrl-0 = <&nandflash_pins_default>;
 	pinctrl-1 = <&nandflash_pins_sleep>;
 
-	ranges = <0 0 0x08000000 0x08000000>;	/* CS0: 256 MB for NAND */
+	ranges = <0 0 0x08000000 0x08000000>;	/* CS0: 128 MB for NAND */
 
 	nand@0,0 {
 		compatible = "ti,omap2-nand";
@@ -427,7 +428,7 @@
 
 		partition@3 {
 			label = "FileSystem";
-			reg = <0x001A0000 0x0FE60000>;
+			reg = <0x001A0000 0x07E60000>;
 		};
 	};
 };
