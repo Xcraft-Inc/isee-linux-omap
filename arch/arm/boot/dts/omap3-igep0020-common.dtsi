@@ -209,9 +209,9 @@
 	 * Display monitor features are burnt in the EEPROM
 	 * as EDID data.
 	 */
-	eeprom@50 {
-		compatible = "ti,eeprom";
-		reg = <0x50>;
+	eeprom@51 {
+		compatible = "at,24c256";
+		reg = <0x51>;
 	};
 };
 
