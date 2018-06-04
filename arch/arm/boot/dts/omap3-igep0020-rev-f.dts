@@ -19,10 +19,11 @@
 	lbep5clwmc_wlen: regulator-lbep5clwmc-wlen {
 		compatible = "regulator-fixed";
 		regulator-name = "regulator-lbep5clwmc-wlen";
-		regulator-min-microvolt = <3300000>;
-		regulator-max-microvolt = <3300000>;
+		regulator-min-microvolt = <1800000>;
+		regulator-max-microvolt = <1800000>;
 		gpio = <&gpio5 11 GPIO_ACTIVE_HIGH>;		/* gpio_139 - WL_EN */
 		enable-active-high;
+		startup-delay-us = <700000>;
 	};
 };
 
@@ -37,12 +38,16 @@
 };
 
 &mmc2 {
-	pinctrl-names = "default";
+	pinctrl-names = "default", "sleep";
 	pinctrl-0 = <&mmc2_pins &lbep5clwmc_pins>;
+	pinctrl-1 = <&mmc2_pins_sleep &lbep5clwmc_pins>;
 	vmmc-supply = <&lbep5clwmc_wlen>;
 	bus-width = <4>;
-	non-removable;
-
+	ti,non-removable;
+	ti,needs-special-hs-handling;
+	cap-power-off-card;
+	keep-power-in-suspend;
+	#dma-cells = <2>;
 	#address-cells = <1>;
 	#size-cells = <0>;
 	wlcore: wlcore@2 {

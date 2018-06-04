@@ -13,6 +13,20 @@
 #include "omap36xx.dtsi"
 
 / {
+	
+	cpus {
+		cpu@0 {
+			cpu0-supply = <&vcc>;
+			operating-points = <
+				/* kHz    uV */
+				300000  1012500
+				600000  1200000
+				800000  1325000
+				1000000	1375000
+			>;
+		};
+	};
+
 	memory@80000000 {
 		device_type = "memory";
 		reg = <0x80000000 0x20000000>; /* 512 MB */
@@ -35,6 +49,7 @@
 	};
 
 };
+
 
 &omap3_pmx_core {
 	uart1_pins: pinmux_uart1_pins {
@@ -81,6 +96,18 @@
 			OMAP3_CORE1_IOPAD(0x2162, PIN_INPUT_PULLUP | MUX_MODE0)	/* sdmmc2_dat3.sdmmc2_dat3 */
 		>;
 	};
+
+		mmc2_pins_sleep: pinmux_mmc2_pins_sleep {
+		pinctrl-single,pins = <
+			OMAP3_CORE1_IOPAD(0x2158, PIN_INPUT_PULLUP | MUX_MODE4)	/* sdmmc2_clk.sdmmc2_clk */
+			OMAP3_CORE1_IOPAD(0x215a, PIN_INPUT_PULLUP | MUX_MODE4)	/* sdmmc2_cmd.sdmmc2_cmd */
+			OMAP3_CORE1_IOPAD(0x215c, PIN_INPUT_PULLUP | MUX_MODE4) /* sdmmc2_dat0.sdmmc2_dat0 */
+			OMAP3_CORE1_IOPAD(0x215e, PIN_INPUT_PULLUP | MUX_MODE4)	/* sdmmc2_dat1.sdmmc2_dat1 */
+			OMAP3_CORE1_IOPAD(0x2160, PIN_INPUT_PULLUP | MUX_MODE4)	/* sdmmc2_dat2.sdmmc2_dat2 */
+			OMAP3_CORE1_IOPAD(0x2162, PIN_INPUT_PULLUP | MUX_MODE4)	/* sdmmc2_dat3.sdmmc2_dat3 */
+		>;
+	};
+
 
 	i2c1_pins: pinmux_i2c1_pins {
 		pinctrl-single,pins = <
