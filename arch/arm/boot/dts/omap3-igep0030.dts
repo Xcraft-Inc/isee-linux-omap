@@ -57,6 +57,11 @@
 	vmmc-supply = <&vmmcsdio_fixed>;
 	mmc-pwrseq = <&mmc2_pwrseq>;
 	bus-width = <4>;
-	non-removable;
+	ti,non-removable;
+	ti,needs-special-hs-handling;
+	cap-power-off-card;
+	keep-power-in-suspend;
+	#dma-cells = <2>;
+	
 };
 
