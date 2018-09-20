@@ -109,11 +109,6 @@
 	phy-mode = "rmii";
 };
 
-&cpsw_emac1 {
-	phy_id = <&davinci_mdio>, <1>;
-	phy-mode = "rmii";
-};
-
 &phy_sel {
 	rmii-clock-ext;
 };
@@ -127,7 +122,8 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&nandflash_pins>;
 
-	ranges = <0 0 0x08000000 0x1000000>;	/* CS0: 16MB for NAND */
+	ranges = <0 0 0x08000000 0x8000000>;	/* CS0: 128MB for NAND */
+
 
 	nand@0,0 {
 		compatible = "ti,omap2-nand";
@@ -166,27 +162,22 @@
 		/* MTD partition table */
 		partition@0 {
 			label = "SPL";
-			reg = <0x00000000 0x000080000>;
+			reg = <0x00000000 0x00080000>;
 		};
 
 		partition@1 {
 			label = "U-boot";
-			reg = <0x00080000 0x001e0000>;
+			reg = <0x00080000 0x00180000>;
 		};
 
 		partition@2 {
 			label = "U-Boot Env";
-			reg = <0x00260000 0x00020000>;
+			reg = <0x00180000 0x00020000>;
 		};
 
 		partition@3 {
-			label = "Kernel";
-			reg = <0x00280000 0x00500000>;
-		};
-
-		partition@4 {
-			label = "File System";
-			reg = <0x00780000 0x007880000>;
+			label = "FileSystem";
+			reg = <0x001A0000 0x07E60000>;
 		};
 	};
 };
