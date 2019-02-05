@@ -1,0 +1,113 @@
+/*
+ * Device Tree Source for IGEP COM MODULE Rev. G (TI OMAP AM/DM37x)
+ *
+ * Copyright (C) 2014 Javier Martinez Canillas <javier@osg.samsung.com>
+ * Copyright (C) 2014 Enric Balletbo i Serra <eballetbo@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ */
+
+#include "omap3-igep0030-common.dtsi"
+#include "omap-gpmc-smsc9221.dtsi"
+
+
+/ {
+	model = "IGEP COM MODULE Rev. G (TI OMAP AM/DM37x)";
+	compatible = "isee,omap3-igep0030-rev-g", "ti,omap36xx", "ti,omap3";
+
+	/* Regulator to trigger the WL_EN signal of the Wifi module */
+	lbep5clwmc_wlen: regulator-lbep5clwmc-wlen {
+		compatible = "regulator-fixed";
+		regulator-name = "regulator-lbep5clwmc-wlen";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		gpio = <&gpio5 11 GPIO_ACTIVE_HIGH>;		/* gpio_139 - WL_EN */
+		enable-active-high;
+	};
+};
+
+&omap3_pmx_core {
+	lbep5clwmc_pins: pinmux_lbep5clwmc_pins {
+		pinctrl-single,pins = <
+			OMAP3_CORE1_IOPAD(0x2164, PIN_INPUT | MUX_MODE4)	/* sdmmc2_dat4.gpio_136 - W_IRQ */
+			OMAP3_CORE1_IOPAD(0x2166, PIN_OUTPUT | MUX_MODE4)	/* sdmmc2_dat5.gpio_137 - BT_EN */
+			OMAP3_CORE1_IOPAD(0x216a, PIN_OUTPUT | MUX_MODE4)	/* sdmmc2_dat7.gpio_139 - WL_EN */
+		>;
+	};
+
+	leds_pins: pinmux_leds_pins {
+		pinctrl-single,pins = <
+			OMAP3_CORE1_IOPAD(0x21be, PIN_OUTPUT | MUX_MODE4)	/* i2c2_scl.gpio_168 */
+		>;
+	};
+
+	smsc9221_pins: pinmux_smsc9221_pins {
+		pinctrl-single,pins = <
+			OMAP3_CORE1_IOPAD(0x21b0, PIN_INPUT | MUX_MODE4)	/* mcspi1_cs2.gpio_176 */
+		>;
+	};
+
+};
+
+&i2c2 {
+	status = "disabled";
+};
+
+&i2c3 {
+	clock-frequency = <100000>;
+
+	/*
+	 * Display monitor features are burnt in the EEPROM
+	 * as EDID data.
+	 */
+	eeprom@51 {
+		compatible = "at,24c256";
+		reg = <0x51>;
+	};
+};
+
+&leds {
+	pinctrl-names = "default";
+	pinctrl-0 = <&leds_pins &leds_core2_pins>;
+
+	boot {
+		label = "omap3:green:boot";
+		gpios = <&gpio6 8 GPIO_ACTIVE_HIGH>;
+		default-state = "on";
+	};
+};
+
+&mmc2 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&mmc2_pins &lbep5clwmc_pins>;
+	vmmc-supply = <&lbep5clwmc_wlen>;
+	bus-width = <4>;
+	ti,non-removable;
+	ti,needs-special-hs-handling;
+	cap-power-off-card;
+	keep-power-in-suspend;
+	#dma-cells = <2>;
+	#address-cells = <1>;
+	#size-cells = <0>;
+	wlcore: wlcore@2 {
+		compatible = "ti,wl1835";
+		reg = <2>;
+		interrupt-parent = <&gpio5>;
+		interrupts = <8 IRQ_TYPE_LEVEL_HIGH>; /* gpio 136 */
+	};
+};
+
+&gpmc {
+	ranges =  <4 0 0x2b000000 0x01000000>,	/* CS4: 16MB for ethernet */
+			<0 0 0x30000000 0x01000000>;	/* CS0: 16MB for NAND */
+	ethernet@gpmc {
+		compatible = "smsc,lan9221","smsc,lan9115";
+		pinctrl-names = "default";
+		pinctrl-0 = <&smsc9221_pins>;
+		reg = <4 0 0xff>;
+		interrupt-parent = <&gpio2>;
+		interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
+	};
+};
