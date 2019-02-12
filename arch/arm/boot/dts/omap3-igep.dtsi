@@ -48,6 +48,12 @@
 		regulator-always-on;
 	};
 
+	hsusb2_power: regulator-hsusb2_power {
+		compatible = "regulator-fixed";
+		regulator-name = "hsusb2_power";
+		regulator-always-on;
+	};
+
 };
 
 
@@ -236,11 +242,14 @@
 	ti,use-leds;
 };
 
+#include "twl4030.dtsi"
+#include "twl4030_omap3.dtsi"
+
 &usb_otg_hs {
 	interface-type = <0>;
 	usb-phy = <&usb2_phy>;
 	phys = <&usb2_phy>;
 	phy-names = "usb2-phy";
 	mode = <3>;
-	power = <50>;
+	power = <100>;
 };
