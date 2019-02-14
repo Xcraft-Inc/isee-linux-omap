@@ -45,7 +45,7 @@
 
 	smsc9221_pins: pinmux_smsc9221_pins {
 		pinctrl-single,pins = <
-			OMAP3_CORE1_IOPAD(0x21d2, PIN_INPUT | MUX_MODE4)	/* mcspi1_cs2.gpio_176 */
+			OMAP3_CORE1_IOPAD(0x20b0, PIN_INPUT | MUX_MODE4)	/* gpmc_ncs1.gpio_52 - ENET0_IRQ*/
 		>;
 	};
 
@@ -70,7 +70,7 @@
 
 &leds {
 	pinctrl-names = "default";
-	pinctrl-0 = <&leds_pins &leds_core2_pins>;
+	pinctrl-0 = <&leds_pins &leds2_pins>;
 
 	boot {
 		label = "omap3:green:boot";

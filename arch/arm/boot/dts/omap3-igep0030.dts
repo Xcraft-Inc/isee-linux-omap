@@ -41,7 +41,7 @@
 
 &leds {
 	pinctrl-names = "default";
-	pinctrl-0 = <&leds_core2_pins>;
+	pinctrl-0 = <&leds2_pins>;
 
 	boot {
 		label = "omap3:green:boot";

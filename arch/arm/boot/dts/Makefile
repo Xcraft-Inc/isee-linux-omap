@@ -508,6 +508,7 @@ dtb-$(CONFIG_ARCH_OMAP3) += \
 	omap3-igep0030.dtb \
 	omap3-igep0030-rev-g.dtb \
 	omap3-igep0030rg-base0010rb.dtb \
+	omap3-igep0030rg-sallen-gunnebo.dtb \
 	omap3-ldp.dtb \
 	omap3-lilly-dbb056.dtb \
 	omap3-n900.dtb \

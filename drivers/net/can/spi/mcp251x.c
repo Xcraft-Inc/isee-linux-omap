@@ -1158,7 +1158,7 @@ static int mcp251x_can_probe(struct spi_device *spi)
 		goto error_probe;
 
 	devm_can_led_init(net);
-
+	dev_info(&spi->dev, "CAN Transceiver, irq %d\n", spi->irq);
 	netdev_info(net, "MCP%x successfully initialized.\n", priv->model);
 	return 0;
 

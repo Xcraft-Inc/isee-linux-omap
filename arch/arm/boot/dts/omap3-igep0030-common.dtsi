@@ -37,7 +37,10 @@
 	hsusb2_phy: hsusb2_phy {
 		compatible = "usb-nop-xceiv";
 		vcc-supply = <&hsusb2_power>;
-		reset-gpios = <&gpio2 22 GPIO_ACTIVE_LOW>;		/* gpio_54 */
+		reset-gpios = <
+			&gpio2 22 GPIO_ACTIVE_LOW	/* gpio_54 */
+			&gpio1 23 GPIO_ACTIVE_LOW	/* gpio_23 */
+		>;		
 	};
 };
 
@@ -64,6 +67,10 @@
 };
 
 &omap3_pmx_core2 {
+	pinctrl-names = "default";
+	pinctrl-0 = <
+		&hsusb2_hub_reset_pins
+	>;
 	hsusb2_core2_pins: pinmux_hsusb2_core2_pins {
 		pinctrl-single,pins = <
 			OMAP3630_CORE2_IOPAD(0x25f0, PIN_OUTPUT | MUX_MODE3)		      /* etk_d10.hsusb2_clk */
@@ -72,11 +79,16 @@
 			OMAP3630_CORE2_IOPAD(0x25f6, PIN_INPUT_PULLDOWN | MUX_MODE3)	/* etk_d13.hsusb2_nxt */
 			OMAP3630_CORE2_IOPAD(0x25f8, PIN_INPUT_PULLDOWN | MUX_MODE3)	/* etk_d14.hsusb2_data0 */
 			OMAP3630_CORE2_IOPAD(0x25fa, PIN_INPUT_PULLDOWN | MUX_MODE3)	/* etk_d15.hsusb2_data1 */
+		>;
+	};
+
+	hsusb2_hub_reset_pins: pinmux_hsusb2_hub_reset_pins {
+		pinctrl-single,pins = <
 			OMAP3630_CORE2_IOPAD(0x25ee, PIN_OUTPUT_PULLDOWN | MUX_MODE4)		/* etk_d9.gpio_23 =  HUB_RESET */
 		>;
 	};
 
-	leds_core2_pins: pinmux_leds_core2_pins {
+	leds2_pins: pinmux_leds2_pins {
 		pinctrl-single,pins = <
 			OMAP3630_CORE2_IOPAD(0x25e0, PIN_OUTPUT | MUX_MODE4)	/* etk_d2.gpio_16 */
 		>;
