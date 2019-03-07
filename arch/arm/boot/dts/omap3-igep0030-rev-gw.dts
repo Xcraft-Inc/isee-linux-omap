@@ -1,42 +1,66 @@
 /*
- * Device Tree Source for IGEPv2 Rev. F (TI OMAP AM/DM37x)
+ * Device Tree Source for IGEP COM MODULE Rev. G (TI OMAP AM/DM37x)
  *
- * Copyright (C) 2012 Javier Martinez Canillas <javier@osg.samsung.com>
- * Copyright (C) 2012 Enric Balletbo i Serra <eballetbo@gmail.com>
+ * Copyright (C) 2014 Javier Martinez Canillas <javier@osg.samsung.com>
+ * Copyright (C) 2014 Enric Balletbo i Serra <eballetbo@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
  */
 
-#include "omap3-igep0020-common.dtsi"
+#include "omap3-igep0030-common.dtsi"
 
 / {
-	model = "IGEPv2 Rev. F (TI OMAP AM/DM37x)";
-	compatible = "isee,omap3-igep0020-rev-f", "ti,omap36xx", "ti,omap3";
+	model = "IGEP COM MODULE Rev. G (TI OMAP AM/DM37x)";
+	compatible = "isee,omap3-igep0030-rev-gw", "ti,omap36xx", "ti,omap3";
 
 	/* Regulator to trigger the WL_EN signal of the Wifi module */
 	lbep5clwmc_wlen: regulator-lbep5clwmc-wlen {
 		compatible = "regulator-fixed";
 		regulator-name = "regulator-lbep5clwmc-wlen";
-		regulator-min-microvolt = <1800000>;
-		regulator-max-microvolt = <1800000>;
-		gpio = <&gpio5 11 GPIO_ACTIVE_HIGH>;		/* gpio_139 - WL_EN */
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&lbep5clwmc_pins>;		
+		gpio = <&gpio5 11 GPIO_ACTIVE_LOW>;		/* gpio_139 - WL_EN */
 		enable-active-high;
-		startup-delay-us = <700000>;
+		startup-delay-us = <70000>;		
 	};
+
 };
 
 &omap3_pmx_core {
 
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart2_pins>;
+
+	
 	lbep5clwmc_pins: pinmux_lbep5clwmc_pins {
 		pinctrl-single,pins = <
-			OMAP3_CORE1_IOPAD(0x21d4, PIN_INPUT | MUX_MODE4)	/* mcspi1_cs3.gpio_177 - W_IRQ */
+			OMAP3_CORE1_IOPAD(0x2164, PIN_INPUT | MUX_MODE4)	/* sdmmc2_dat4.gpio_136 - W_IRQ */
 			OMAP3_CORE1_IOPAD(0x2166, PIN_OUTPUT | MUX_MODE4)	/* sdmmc2_dat5.gpio_137 - BT_EN */
 			OMAP3_CORE1_IOPAD(0x216a, PIN_OUTPUT | MUX_MODE4)	/* sdmmc2_dat7.gpio_139 - WL_EN */
 		>;
 	};
 
+	leds_pins: pinmux_leds_pins {
+		pinctrl-single,pins = <
+			OMAP3_CORE1_IOPAD(0x21be, PIN_OUTPUT | MUX_MODE4)	/* i2c2_scl.gpio_168 */
+		>;
+	};
+
+	/* BT Uart */
+	uart2_pins: pinmux_uart2_pins {
+		pinctrl-single,pins = <
+			OMAP3_CORE1_IOPAD(0x216c, PIN_INPUT | MUX_MODE1)	/* mcbsp3_dx.uart2_cts */
+			OMAP3_CORE1_IOPAD(0x216e, PIN_OUTPUT | MUX_MODE1)	/* mcbsp3_dr.uart2_rts */
+			OMAP3_CORE1_IOPAD(0x2170, PIN_OUTPUT | MUX_MODE1)	/* mcbsp3_clk.uart2_tx */
+			OMAP3_CORE1_IOPAD(0x2172, PIN_INPUT | MUX_MODE1)	/* mcbsp3_fsx.uart2_rx */
+		>;
+	};
+
+	/* MicroSD Card */
 	mmc2_pins: pinmux_mmc2_pins {
 		pinctrl-single,pins = <
 			OMAP3_CORE1_IOPAD(0x2158, PIN_INPUT_PULLUP | MUX_MODE0)	/* sdmmc2_clk.sdmmc2_clk */
@@ -58,13 +82,30 @@
 			OMAP3_CORE1_IOPAD(0x2162, PIN_INPUT_PULLUP | MUX_MODE4)	/* sdmmc2_dat3.sdmmc2_dat3 */
 		>;
 	};
+};
 
+/* BT Uart in IGEP Wifi Boards */
+&uart2 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart2_pins>;
+};
+
+&leds {
+	pinctrl-names = "default";
+	pinctrl-0 = <&leds_pins &leds_core2_pins>;
+
+	boot {
+		label = "omap3:green:boot";
+		gpios = <&gpio6 8 GPIO_ACTIVE_HIGH>;
+		default-state = "on";
+	};
 };
 
 &mmc2 {
-	pinctrl-names = "default", "sleep";
-	pinctrl-0 = <&mmc2_pins &lbep5clwmc_pins>;
-	pinctrl-1 = <&mmc2_pins_sleep &lbep5clwmc_pins>;
+	status = "ok";
+	pinctrl-names = "default";
+	pinctrl-0 = <&mmc2_pins>;
+	pinctrl-1 = <&mmc2_pins_sleep>;
 	vmmc-supply = <&lbep5clwmc_wlen>;
 	bus-width = <4>;
 	ti,non-removable;
@@ -77,7 +118,10 @@
 	wlcore: wlcore@2 {
 		compatible = "ti,wl1835";
 		reg = <2>;
-		interrupt-parent = <&gpio6>;
-		interrupts = <17 IRQ_TYPE_LEVEL_HIGH>; /* gpio 177 */
+		interrupt-parent = <&gpio5>;
+		interrupts = <8 IRQ_TYPE_LEVEL_HIGH>; /* gpio 136 */
+		ref-clock-frequency = <26000000>;
 	};
 };
+
+

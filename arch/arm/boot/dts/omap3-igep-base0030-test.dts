@@ -1,0 +1,143 @@
+/*
+ * Device Tree Source for IGEP COM MODULE Rev. G + Base Test (TI OMAP AM/DM37x)
+ * 
+ * Copyright (C) 2019 Manel Caro  <mcaro@iseebcn.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ */
+
+#include "omap3-igep0030-rev-gw.dts"
+#include "omap-gpmc-smsc9221.dtsi"
+
+/ {
+	model = "IGEP COM MODULE Rev. G Base Test (TI OMAP AM/DM37x)";
+	compatible = "isee,omap3-igep0030-rev-g-test", "ti,omap36xx", "ti,omap3";
+};
+
+&omap3_pmx_core {
+	pinctrl-names = "default";
+
+	smsc9221_pins: pinmux_smsc9221_pins {
+		pinctrl-single,pins = <
+			OMAP3_CORE1_IOPAD(0x20b0, PIN_INPUT_PULLUP | MUX_MODE4)		/* gpmc_ncs1.gpio_52 - ENET0_IRQ */
+			OMAP3_CORE1_IOPAD(0x208a, PIN_OUTPUT_PULLUP | MUX_MODE4)	/* gpmc_a9.gpio_42 - ENET0_nRESET */
+		>;
+	};
+
+	smsc9221two_pins: pinmux_smsc9221two_pins {
+		pinctrl-single,pins = <
+			OMAP3_CORE1_IOPAD(0x2088, PIN_INPUT_PULLUP | MUX_MODE4)		/* gpmc_a8.gpio_41 - ENET1_IRQ */
+			OMAP3_CORE1_IOPAD(0x208c, PIN_OUTPUT_PULLUP | MUX_MODE4)	/* gpmc_a10.gpio_43 - ENET1_nRESET */
+		>;
+	};		
+};
+
+&gpmc { /delete-node/ nand@0,0; };
+
+
+&gpmc {
+		
+	ranges =  <4 0 0x2b000000 0x01000000>,	/* CS4: 16MB for ethernet 0*/
+			  <6 0 0x2d000000 0x01000000>,	/* CS6: 16MB for ethernet 1*/
+			  <0 0 0x30000000 0x01000000>;	/* CS0: 16MB for NAND */
+
+	nand@0,0 {
+		compatible = "ti,omap2-nand";
+		reg = <0 0 4>; /* CS0, offset 0, IO size 4 */
+		interrupt-parent = <&gpmc>;
+		interrupts = <0 IRQ_TYPE_NONE>, /* fifoevent */
+			     <1 IRQ_TYPE_NONE>;	/* termcount */
+		linux,mtd-name= "micron,mt29c4g96maz";
+		nand-bus-width = <16>;
+		rb-gpios = <&gpmc 0 GPIO_ACTIVE_HIGH>; /* gpmc_wait0 */
+		gpmc,device-width = <2>;
+		ti,nand-ecc-opt = "bch8";
+		gpmc,sync-clk-ps = <0>;
+		gpmc,cs-on-ns = <0>;
+		gpmc,cs-rd-off-ns = <44>;
+		gpmc,cs-wr-off-ns = <44>;
+		gpmc,adv-on-ns = <6>;
+		gpmc,adv-rd-off-ns = <34>;
+		gpmc,adv-wr-off-ns = <44>;
+		gpmc,we-off-ns = <40>;
+		gpmc,oe-off-ns = <54>;
+		gpmc,access-ns = <64>;
+		gpmc,rd-cycle-ns = <82>;
+		gpmc,wr-cycle-ns = <82>;
+		gpmc,wr-access-ns = <40>;
+		gpmc,wr-data-mux-bus-ns = <0>;
+
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/* MTD partition table */
+		partition@0 {
+			label = "SPL";
+			reg = <0x00000000 0x00080000>;
+		};
+
+		partition@1 {
+			label = "U-boot";
+			reg = <0x00080000 0x00100000>;
+		};
+
+		partition@2 {
+			label = "U-Boot Env";
+			reg = <0x00180000 0x00020000>;
+		};
+
+		partition@3 {
+			label = "FileSystem";
+			reg = <0x001A0000 0x07E60000>;
+		};
+	};
+	
+	ethernet@gpmc {
+		reg = <4 0 0xff>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&smsc9221_pins>;
+		interrupt-parent = <&gpio2>;
+		interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
+		reset-gpios = <&gpio2 10 GPIO_ACTIVE_LOW>;
+	};
+
+	ethernet1@6,0 {
+		reg = <6 0 0xff>;
+		compatible = "smsc,lan9221","smsc,lan9115";
+		pinctrl-names = "default";
+		pinctrl-0 = <&smsc9221two_pins>;
+
+		bank-width = <2>;
+		gpmc,mux-add-data;
+		gpmc,cs-on-ns = <0>;
+		gpmc,cs-rd-off-ns = <42>;
+		gpmc,cs-wr-off-ns = <36>;
+		gpmc,adv-on-ns = <6>;
+		gpmc,adv-rd-off-ns = <12>;
+		gpmc,adv-wr-off-ns = <12>;
+		gpmc,oe-on-ns = <0>;
+		gpmc,oe-off-ns = <42>;
+		gpmc,we-on-ns = <0>;
+		gpmc,we-off-ns = <36>;
+		gpmc,rd-cycle-ns = <60>;
+		gpmc,wr-cycle-ns = <54>;
+		gpmc,access-ns = <36>;
+		gpmc,page-burst-access-ns = <0>;
+		gpmc,bus-turnaround-ns = <0>;
+		gpmc,cycle2cycle-delay-ns = <0>;
+		gpmc,wr-data-mux-bus-ns = <18>;
+		gpmc,wr-access-ns = <42>;
+		gpmc,cycle2cycle-samecsen;
+		gpmc,cycle2cycle-diffcsen;
+		vddvario-supply = <&vddvario>;
+		vdd33a-supply = <&vdd33a>;
+		reg-io-width = <4>;
+		smsc,save-mac-address;
+
+		interrupt-parent = <&gpio2>;
+		interrupts = <9 0x2>;
+		reset-gpios = <&gpio2 11 GPIO_ACTIVE_LOW>;
+	};
+};

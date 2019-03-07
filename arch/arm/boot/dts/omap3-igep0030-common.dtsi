@@ -34,9 +34,17 @@
 		};
 	};
 
+	hsusb2_power: regulator-hsusb2_power {
+		compatible = "regulator-fixed";
+		regulator-name = "hsusb2_power";
+		regulator-always-on;
+	};		
+
 	hsusb2_phy: hsusb2_phy {
 		compatible = "usb-nop-xceiv";
-		reset-gpios = <&gpio2 22 GPIO_ACTIVE_LOW>;		/* gpio_54 */
+		reset-gpios = <&gpio2 22 GPIO_ACTIVE_LOW>;		/* gpio_54 = reset for USB3322*/
+		vcc-supply = <&hsusb2_power>;
+		#phy-cells = <0>;		
 	};
 };
 
@@ -55,14 +63,6 @@
 		>;
 	};
 
-	uart2_pins: pinmux_uart2_pins {
-		pinctrl-single,pins = <
-			OMAP3_CORE1_IOPAD(0x216c, PIN_INPUT | MUX_MODE1)	/* mcbsp3_dx.uart2_cts */
-			OMAP3_CORE1_IOPAD(0x216e, PIN_OUTPUT | MUX_MODE1)	/* mcbsp3_dr.uart2_rts */
-			OMAP3_CORE1_IOPAD(0x2170, PIN_OUTPUT | MUX_MODE1)	/* mcbsp3_clk.uart2_tx */
-			OMAP3_CORE1_IOPAD(0x2172, PIN_INPUT | MUX_MODE1)	/* mcbsp3_fsx.uart2_rx */
-		>;
-	};
 };
 
 &omap3_pmx_core2 {
@@ -93,11 +93,6 @@
 
 &usbhsehci {
 	phys = <0 &hsusb2_phy>;
-};
-
-&uart2 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&uart2_pins>;
 };
 
 &gpmc {
