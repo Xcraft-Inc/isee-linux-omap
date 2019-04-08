@@ -76,6 +76,7 @@
 	#dma-cells = <2>;
 };
 
+#if 0
 &gpmc {
 	ranges = <0 0 0x08000000 0x20000000>;	/* CS0: 512 MB for NAND */
 
@@ -87,3 +88,4 @@
 		};
 	};
 };
+#endif
