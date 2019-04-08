@@ -130,22 +130,24 @@
 		/* MTD partition table */
 		partition@0 {
 			label = "SPL";
-			reg = <0x00000000 0x00080000>;
+			reg = <0x00000000 0x00080000>;	/* 512KiB */
 		};
 
 		partition@1 {
 			label = "U-boot";
-			reg = <0x00080000 0x00100000>;
+			reg = <0x00080000 0x00100000>;	/* 1 MiB */
 		};
 
 		partition@2 {
-			label = "U-Boot Env";
-			reg = <0x00180000 0x00020000>;
+			label = "boot";
+			/* reg = <0x00180000 0x00020000>;
+			reg = <0x00180000 0x00A00000>;	/* 10 MiB */
 		};
 
 		partition@3 {
-			label = "FileSystem";
-			reg = <0x001A0000 0x07E60000>;
+			label = "rootfs";
+			reg = <0x00B80000 0>;
+			/* HACK: MTDPART_SIZ_FULL=0 so fill to end */
 		};
 	};
 };
