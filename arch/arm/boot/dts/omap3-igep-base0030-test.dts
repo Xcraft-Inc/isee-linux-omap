@@ -247,12 +247,12 @@
 	};
 };
 
-#if 0
-#include "twl4030.dtsi"
-#include "twl4030_omap3.dtsi"
-
 &i2c3 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&i2c3_pins>;
+	clock-frequency = <100000>;
+
+	eeprom@51 {
+		compatible = "at,24c256";
+		reg = <0x51>;
+	};
 };
-#endif
+
