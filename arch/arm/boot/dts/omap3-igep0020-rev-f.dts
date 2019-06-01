@@ -21,7 +21,9 @@
 		regulator-name = "regulator-lbep5clwmc-wlen";
 		regulator-min-microvolt = <1800000>;
 		regulator-max-microvolt = <1800000>;
-		gpio = <&gpio5 11 GPIO_ACTIVE_HIGH>;		/* gpio_139 - WL_EN */
+		pinctrl-names = "default";
+		pinctrl-0 = <&lbep5clwmc_pins>;				
+		gpio = <&gpio5 11 GPIO_ACTIVE_LOW>;		/* gpio_139 - WL_EN */
 		enable-active-high;
 		startup-delay-us = <700000>;
 	};
@@ -62,9 +64,10 @@
 };
 
 &mmc2 {
+	status = "ok";
 	pinctrl-names = "default", "sleep";
-	pinctrl-0 = <&mmc2_pins &lbep5clwmc_pins>;
-	pinctrl-1 = <&mmc2_pins_sleep &lbep5clwmc_pins>;
+	pinctrl-0 = <&mmc2_pins>;
+	pinctrl-1 = <&mmc2_pins_sleep>;
 	vmmc-supply = <&lbep5clwmc_wlen>;
 	bus-width = <4>;
 	ti,non-removable;
