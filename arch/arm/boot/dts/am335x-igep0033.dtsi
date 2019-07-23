@@ -117,6 +117,10 @@
 	status = "okay";
 };
 
+&sgx {
+	status = "disabled";
+};
+
 &gpmc {
 	status = "okay";
 	pinctrl-names = "default";

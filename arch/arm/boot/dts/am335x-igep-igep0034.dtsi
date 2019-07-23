@@ -110,10 +110,10 @@
 		};
 	};
 };
-/*
+
 &sgx {
 	status = "okay";
-};*/
+};
 
 &davinci_mdio {
 	vsc8531_1: ethernet-phy@2 {
