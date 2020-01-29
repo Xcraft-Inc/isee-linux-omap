@@ -92,16 +92,6 @@
 		enable-active-high;
 	};
 
-	uart_en_reg: fixedregulator@2 {
-		compatible = "regulator-fixed";
-		regulator-name = "uart-en-regulator";
-		regulator-min-microvolt = <1800000>;
-		regulator-max-microvolt = <1800000>;
-
-		/* UART_EN */
-		gpio = <&gpio3 21 0>;
-		enable-active-high;
-	};
 };
 
 &am33xx_pinmux {
