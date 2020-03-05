@@ -315,7 +315,7 @@
 	};
 
 	eeprom: eeprom@50 {
-		compatible = "at,24c256";
+		compatible = "at,24c32";
 		reg = <0x50>;
 	};
 };
@@ -429,7 +429,7 @@
 
 		partition@3 {
 			label = "FileSystem";
-			reg = <0x001A0000 0x0FE60000>;
+			reg = <0x001A0000 0>;
 		};
 	};
 };
