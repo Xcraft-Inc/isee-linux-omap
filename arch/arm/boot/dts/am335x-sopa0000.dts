@@ -414,22 +414,22 @@
 		/* MTD partition table */
 		partition@0 {
 			label = "SPL";
-			reg = <0x00000000 0x00080000>;
+			reg = <0x00000000 0x00080000>; /* 512 kB */
 		};
 
 		partition@1 {
 			label = "U-boot";
-			reg = <0x00080000 0x00100000>;
+			reg = <0x00080000 0x00100000>; /* 1 MB */
 		};
 
 		partition@2 {
-			label = "U-Boot Env";
-			reg = <0x00180000 0x00020000>;
+			label = "Kernel";
+			reg = <0x00180000 0x00C00000>; /* 12 MB */
 		};
 
 		partition@3 {
 			label = "FileSystem";
-			reg = <0x001A0000 0>;
+			reg = <0x00D80000 0>;
 		};
 	};
 };
