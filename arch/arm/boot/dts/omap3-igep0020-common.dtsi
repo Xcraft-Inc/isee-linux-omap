@@ -44,18 +44,26 @@
 	};
 
 	/* HS USB Port 1 Power */
-	hsusb1_power: hsusb1_power_reg {
+	hsusb1_vbus: hsusb1_vbus_reg {
 		compatible = "regulator-fixed";
 		regulator-name = "hsusb1_vbus";
-		regulator-min-microvolt = <3300000>;
-		regulator-max-microvolt = <3300000>;
+		regulator-min-microvolt = <5000000>;
+		regulator-max-microvolt = <5000000>;
 		gpio = <&twl_gpio 18 GPIO_ACTIVE_LOW>;	/* GPIO LEDA */
-		startup-delay-us = <70000>;
+		regulator-always-on;
 	};
+
+	hsusb1_power: hsusb1_power_reg {
+		compatible = "regulator-fixed";
+		regulator-name = "hsusb1_power";
+		regulator-always-on;
+	};	
 
 	/* HS USB Host PHY on PORT 1 */
 	hsusb1_phy: hsusb1_phy {
 		compatible = "usb-nop-xceiv";
+		pinctrl-names = "default";
+	    pinctrl-0 = <&hsusbb1_reset_pins>;
 		reset-gpios = <&gpio1 24 GPIO_ACTIVE_LOW>; /* gpio_24 */
 		vcc-supply = <&hsusb1_power>;
 	};
@@ -204,6 +212,12 @@
 			OMAP3630_CORE2_IOPAD(0x25e6, PIN_INPUT_PULLDOWN | MUX_MODE3)	/* etk_d5.hsusb1_data5 */
 			OMAP3630_CORE2_IOPAD(0x25e8, PIN_INPUT_PULLDOWN | MUX_MODE3)	/* etk_d6.hsusb1_data6 */
 			OMAP3630_CORE2_IOPAD(0x25ea, PIN_INPUT_PULLDOWN | MUX_MODE3)	/* etk_d7.hsusb1_data3 */
+			/* OMAP3630_CORE2_IOPAD(0x25f0, PIN_OUTPUT | MUX_MODE4)	*/		/* etk_d10.gpio_24 */
+		>;
+	};
+
+	hsusbb1_reset_pins: pinmux_hsusbb1_reset_pins {
+		pinctrl-single,pins = <
 			OMAP3630_CORE2_IOPAD(0x25f0, PIN_OUTPUT | MUX_MODE4)			/* etk_d10.gpio_24 */
 		>;
 	};
